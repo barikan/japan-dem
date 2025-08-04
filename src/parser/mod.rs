@@ -170,22 +170,20 @@ pub fn parse_dem_xml<R: BufRead>(reader: R) -> Result<DemTile> {
     // startPointを考慮した実際のデータ数を計算
     // startPoint(1056, 0)は最初の1056列がデータ無しを意味する
     let expected_values = rows * cols - start_x - start_y * cols;
-
-    // 値の数を検証
-    if values.len() != expected_values {
-        return Err(anyhow::anyhow!(
-            "Value count mismatch: expected {} ({}x{} - start_x {}), got {}",
-            expected_values,
-            rows,
-            cols,
-            start_x,
-            values.len()
-        ));
-    }
+    let values_len = values.len();
 
     // startPointの分だけ-9999（NoData）を先頭に追加
     let mut full_values = vec![-9999.0; start_x + start_y * cols];
     full_values.extend(values);
+
+    // 値の数が期待される値の数と一致しない場合、末尾に-9999を追加
+    if values_len != expected_values {
+        let tail_nodata_count = expected_values - values_len;
+        if tail_nodata_count > 0 {
+            full_values.extend(vec![-9999.0; tail_nodata_count]);
+        }
+    }
+
     let values = full_values;
 
     let metadata = Metadata {
