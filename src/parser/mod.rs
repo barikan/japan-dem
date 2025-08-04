@@ -169,7 +169,7 @@ pub fn parse_dem_xml<R: BufRead>(reader: R) -> Result<DemTile> {
 
     // startPointを考慮した実際のデータ数を計算
     // startPoint(1056, 0)は最初の1056列がデータ無しを意味する
-    let expected_values = rows * cols - start_x;
+    let expected_values = rows * cols - start_x - start_y * cols;
 
     // 値の数を検証
     if values.len() != expected_values {
@@ -184,7 +184,7 @@ pub fn parse_dem_xml<R: BufRead>(reader: R) -> Result<DemTile> {
     }
 
     // startPointの分だけ-9999（NoData）を先頭に追加
-    let mut full_values = vec![-9999.0; start_x];
+    let mut full_values = vec![-9999.0; start_x + start_y * cols];
     full_values.extend(values);
     let values = full_values;
 
