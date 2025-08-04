@@ -54,6 +54,7 @@ impl DemTile {
     /// 座標系識別子からEPSGコードを推定
     pub fn guess_epsg(&self) -> Option<u32> {
         match self.metadata.crs_identifier.as_str() {
+            "fguuid:jgd2024.bl" => Some(6668), // JGD2024 / 緯度経度
             "fguuid:jgd2011.bl" => Some(6668), // JGD2011 / 緯度経度
             "fguuid:jgd2000.bl" => Some(4612), // JGD2000 / 緯度経度
             "fguuid:tokyo.bl" => Some(4301),   // Tokyo / 緯度経度
